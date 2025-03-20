@@ -1,11 +1,12 @@
 #ifndef Server_HPP
 # define Server_HPP
+# include "Monitor.hpp"
 
 class Server
 {
     private:
-        int port;
-        int fd;
+        int     fd;
+        Monitor monitor;
 
     public:
         Server();
@@ -14,6 +15,7 @@ class Server
         ~Server();
 
         Server	&operator = (const Server &rhs);
+        void    launch();
 };
 
 #endif

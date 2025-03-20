@@ -4,7 +4,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#define BACKLOG 1
+#define BACKLOG 5
 #define SUCCESS 0
 #define FAILURE 1
 
@@ -12,7 +12,7 @@ using namespace std;
 
 void	setSockListen(int fd)
 {
-	if (listen(fd, 5) != -1)
+	if (listen(fd, BACKLOG) != -1)
 		return ;
 
 	perror("listen");

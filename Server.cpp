@@ -1,7 +1,9 @@
 #include "Server.hpp"
 #include <iostream>
+#include <unistd.h>
 
-int getServSock(const char *port);
+int     getServSock(const char *port);
+void    handleEvents(const pollfd *pfds);
 
 Server::Server()
 {
@@ -25,6 +27,9 @@ Server::Server(const Server &other)
 Server::~Server() 
 {
     std::cout << "Server's Destructor called\n";
+
+    if (close(fd) == -1)
+        perror("close");
 }
 
 
@@ -33,4 +38,15 @@ Server    &Server::operator = (const Server &rhs)
     (void)rhs;
 
     return (*this);
+}
+
+void    Server::launch()
+{
+    monitor.add(fd, POLLIN);
+
+    while(true)
+    {
+        monitor.listen();
+        handleEvents(monitor.getList());
+    }
 }
