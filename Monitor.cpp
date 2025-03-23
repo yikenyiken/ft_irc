@@ -1,6 +1,7 @@
 #include "Monitor.hpp"
 #include <iostream>
 #include <cstring>
+#include <unistd.h>
 
 void	rtimeThrow(std::string syscall);
 
@@ -33,19 +34,43 @@ void	Monitor::add(int fd, short events)
 {
 	pollfd	pfd;
 
+	
 	pfd.fd = fd;
 	pfd.events = events;
-
+	
 	pfds.push_back(pfd);
+	std::cout << "added to monitor\n";
+}
+
+void	Monitor::remove(int fd)
+{
+	for (std::vector<pollfd>::iterator it = pfds.begin(); it != pfds.end(); it++)
+	{
+		if (it->fd == fd)
+		{
+			pfds.erase(it);
+			return ;
+		}
+	}
 }
 
 void	Monitor::listen()
 {
-	if (poll(pfds.data(), pfds.size(), -1) == -1)
+	if ((readyFds = poll(pfds.data(), pfds.size(), -1)) == -1)
 		rtimeThrow("poll");
 }
 
-const pollfd	*Monitor::getList()
+const std::vector<pollfd>	&Monitor::getList()
 {
-	return (pfds.data());
+	return (pfds);
+}
+
+int	Monitor::getReadyFds()
+{
+	return (readyFds);
+}
+
+size_t	Monitor::getSize()
+{
+	return (pfds.size());
 }

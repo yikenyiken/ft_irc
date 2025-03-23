@@ -3,6 +3,8 @@
 #include <cstring>
 #include <fcntl.h>
 #include <unistd.h>
+#include <cstdio>
+#include <cstdlib>
 
 #define BACKLOG 5
 #define SUCCESS 0
@@ -23,11 +25,18 @@ int	getBoundSock(addrinfo *res)
 {
 	int			fd;
 	addrinfo	*p;
+	int			yes = 1;
 
 	for (p = res; p != NULL; p = p->ai_next)
 	{
 		if ((fd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1)
 			continue;
+
+		if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1)
+		{
+			close(fd);
+			continue ;
+		}	
 
 		if (fcntl(fd, F_SETFL, SOCK_NONBLOCK) == -1 ||
 			bind(fd, p->ai_addr, p->ai_addrlen) == -1)

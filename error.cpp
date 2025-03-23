@@ -1,6 +1,7 @@
 #include <string>
 #include <cstring>
 #include <stdexcept>
+#include <cerrno>
 
 void	rtimeThrow(std::string syscall)
 {
