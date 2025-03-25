@@ -33,7 +33,6 @@ ClientList	&ClientList::operator = (const ClientList &rhs)
 void	ClientList::add(int fd)
 {
 	lst.push_back(Client(fd));
-	std::cout << "ClientList: added client to the list\n";
 }
 
 void	ClientList::remove(int fd)
@@ -53,13 +52,13 @@ void	ClientList::remove(int fd)
 
 const Client	&ClientList::getClientByFd(int fd)
 {
-	std::vector<Client>::iterator	it;
+	std::size_t	i;
 
-	for (it = lst.begin(); it != lst.end(); it++)
+	for (i = 0; i < lst.size(); i++)
 	{
-		if (it->getSockfd() == fd)
+		if (lst[i].getSockfd() == fd)
 			break ;
 	}
 
-	return (*it);
+	return (lst[i]);
 }

@@ -4,7 +4,9 @@
 #include <cstdio>
 #include <netdb.h>
 #include <fcntl.h>
-#define LEN 25
+#include <errno.h>
+#define LEN 2
+#define READING LEN - 1
 
 using namespace std;
 
@@ -57,7 +59,6 @@ void    Server::launch()
 
 		for (std::size_t i = 0; i < lst.size(); i++)
 		{
-			cout << endl;
 			if ((lst[i].revents & POLLIN) && lst[i].fd == servSock)
 				acceptCnts();
 			if ((lst[i].revents & POLLIN) && lst[i].fd != servSock)
@@ -82,14 +83,21 @@ void    Server::acceptCnts()
 
 void	Server::handleClientEvents(const Client &client)
 {
-	int fd = client.getSockfd();
+	int		fd = client.getSockfd();
+	char	data[LEN];
+	ssize_t	bytes_read = recv(fd, data, READING, 0);
+	string	temp;
 
-	std::string	data[LEN];
-	ssize_t	bytes_read = recv(fd, data, LEN, 0);
+	while (bytes_read && bytes_read != -1)
+	{
+		data[bytes_read] = '\0';
+		temp += data;
+		bytes_read = recv(fd, data, READING, 0);
+	}
 
-	if (bytes_read == (ssize_t)-1)
+	if (bytes_read == (ssize_t)-1 && errno != EWOULDBLOCK)
 		rtimeThrow("recv");
-	
+
 	if (!bytes_read)
 	{
 		monitor.remove(fd);
@@ -97,5 +105,5 @@ void	Server::handleClientEvents(const Client &client)
 		return ;
 	}
 
-	
+	cout << temp;
 }

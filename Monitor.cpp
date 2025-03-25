@@ -39,7 +39,6 @@ void	Monitor::add(int fd, short events)
 	pfd.events = events;
 	
 	pfds.push_back(pfd);
-	std::cout << "added to monitor\n";
 }
 
 void	Monitor::remove(int fd)
