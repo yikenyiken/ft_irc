@@ -41,3 +41,36 @@ void	Client::setSockfd(int fd)
 {
 	sockfd = fd;
 }
+
+std::ostream	&Client::operator << (std::string s)
+{
+	buf << s;
+
+	return (buf);
+}
+
+std::string	&Client::operator >> (std::string &ostr)
+{
+	std::string	line;
+
+	std::getline(buf, line);
+
+	if (buf.eof())
+	{
+		buf.clear();
+		buf << line;
+		line = "";
+	}
+
+	ostr = line;
+
+	return (ostr);
+}
+
+std::ostream	&operator << (std::ostream &os, Client &client)
+{
+	os << "fd: " << client.getSockfd() << std::endl;
+	os << "buf: " << client.buf.str();
+
+	return (os);
+}

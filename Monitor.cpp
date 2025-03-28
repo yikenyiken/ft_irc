@@ -30,6 +30,7 @@ Monitor	&Monitor::operator = (const Monitor &rhs)
 	return (*this);
 }
 
+//adds fd to the fds being monitored for events
 void	Monitor::add(int fd, short events)
 {
 	pollfd	pfd;
@@ -53,6 +54,7 @@ void	Monitor::remove(int fd)
 	}
 }
 
+// sleep until at least one fd is ready
 void	Monitor::listen()
 {
 	if ((readyFds = poll(pfds.data(), pfds.size(), -1)) == -1)

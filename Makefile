@@ -1,7 +1,7 @@
 NAME	= server
 FLAGS	= -Werror -Wall -Wextra -std=c++98
 HEADERS	= Server.hpp Client.hpp ClientList.hpp Monitor.hpp
-SRCS	= main.cpp Server.cpp Monitor.cpp Client.cpp ClientList.cpp userInpParse.cpp servSockGen.cpp error.cpp
+SRCS	= main.cpp Server.cpp Monitor.cpp Client.cpp ClientList.cpp userInpParse.cpp servSockGen.cpp error.cpp split.cpp commands/Pass.cpp
 OBJS	= $(SRCS:.cpp=.o)
 CXX		= c++
 

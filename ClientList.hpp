@@ -15,7 +15,7 @@ class ClientList
 		ClientList		&operator = (const ClientList &rhs);
 		void			add(int fd);
 		void			remove(int fd);
-		const Client	&getClientByFd(int fd);
+		Client	&getClientByFd(int fd);
 };
 
 #endif

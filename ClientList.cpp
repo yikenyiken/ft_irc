@@ -30,6 +30,7 @@ ClientList	&ClientList::operator = (const ClientList &rhs)
 	return (*this);
 }
 
+// adds new client to the list
 void	ClientList::add(int fd)
 {
 	lst.push_back(Client(fd));
@@ -50,7 +51,7 @@ void	ClientList::remove(int fd)
 	}
 }
 
-const Client	&ClientList::getClientByFd(int fd)
+Client	&ClientList::getClientByFd(int fd)
 {
 	std::size_t	i;
 

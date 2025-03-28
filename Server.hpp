@@ -1,8 +1,10 @@
 #ifndef Server_HPP
 # define Server_HPP
-# include "Monitor.hpp"
+# define CMDS_N 1
 # include <vector>
+# include "Monitor.hpp"
 # include "ClientList.hpp"
+# include "commands/ICommand.hpp"
 
 class Server
 {
@@ -10,6 +12,8 @@ class Server
         int         servSock;
         Monitor     monitor;
         ClientList  clients;
+        std::string	cmdNames[CMDS_N];
+        ICommand    *(*cmdFactory[CMDS_N])(char **args);
 
     public:
         Server();
@@ -20,8 +24,8 @@ class Server
         Server	&operator = (const Server &rhs);
         void    launch();
         void    acceptCnts();
-        void    handleClientEvents(const Client &client);
-
+        void    handleClientEvents(Client &client);
+        void    procCmds(Client &client);
 };
 
 #endif
