@@ -1,8 +1,7 @@
+#include "../include/error.h"
 #include <cstdlib>
 #include <exception>
 #include <iostream>
-
-void	rtimeThrow(std::string syscall);
 
 int	countWrds(const char *str, char sep)
 {

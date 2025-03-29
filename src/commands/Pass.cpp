@@ -1,4 +1,4 @@
-#include "Pass.hpp"
+#include "../../include/commands/Pass.hpp"
 #include <iostream>
 
 Pass::Pass()

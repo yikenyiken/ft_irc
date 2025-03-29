@@ -1,9 +1,8 @@
-#include "Monitor.hpp"
+#include "../include/Monitor.hpp"
+#include "../include/error.h"
 #include <iostream>
 #include <cstring>
 #include <unistd.h>
-
-void	rtimeThrow(std::string syscall);
 
 Monitor::Monitor()
 {

@@ -1,20 +1,17 @@
-#include "Server.hpp"
+#include "../include/Server.hpp"
+#include "../include/error.h"
+#include "../include/utils.h"
+#include "../include/servSock.h"
+#include "../include/commands/Pass.hpp"
+#include "../include/utils.h"
 #include <iostream>
 #include <unistd.h>
 #include <cstdio>
-#include <netdb.h>
 #include <fcntl.h>
 #include <errno.h>
-#include "commands/Pass.hpp"
-
-#define LEN 2
-#define READING LEN - 1
+#include <netdb.h>
 
 using namespace std;
-
-int     getServSock(const char *port);
-void	rtimeThrow(std::string syscall);
-char	**split(const char *str, char sep);
 
 Server::Server()
 {
@@ -70,12 +67,22 @@ void    Server::launch()
 
 		monitor.listen();
 
+		int	fdsHandled = 0;
+
 		for (std::size_t i = 0; i < lst.size(); i++)
 		{
-			if ((lst[i].revents & POLLIN) && lst[i].fd == servSock)
-				acceptCnts();
-			if ((lst[i].revents & POLLIN) && lst[i].fd != servSock)
-				handleClientEvents(clients.getClientByFd(lst[i].fd));
+			if (lst[i].revents & POLLIN)
+			{
+				if (lst[i].fd == servSock)
+					acceptCnts();
+				else
+					handleClientEvents(clients.getClientByFd(lst[i].fd));
+
+				++fdsHandled;
+			}
+
+			if (monitor.getReadyFds() == fdsHandled)
+				break ;
 		}
 	}
 }
@@ -96,77 +103,42 @@ void    Server::acceptCnts()
 
 void	Server::handleClientEvents(Client &client)
 {
-	int		fd = client.getSockfd();
-	char	data[LEN];
-	ssize_t	bytes_read = recv(fd, data, READING, 0);
+	int closed = !client.recvData();
 
-	while (bytes_read && bytes_read != -1) //read all available data into client buffer
+	if (closed) // connection closed
 	{
-		data[bytes_read] = '\0';
-		client << data;
-		bytes_read = recv(fd, data, READING, 0);
-	}
-
-	if (bytes_read == (ssize_t)-1 && errno != EWOULDBLOCK)
-		rtimeThrow("recv");
-
-	if (!bytes_read) // connection closed
-	{
-		monitor.remove(fd);
-		clients.remove(fd);
+		monitor.remove(client.getSockfd());
+		clients.remove(client.getSockfd());
 		return ;
 	}
 
 	procCmds(client);
 }
 
-// search for word (delimited by spaces or start/end of string)
-int	foundWrd(string str, string word)
-{
-	size_t	pos = str.find(word);
-
-	while (pos != string::npos)
-	{
-		if (
-				(!pos && (str[word.size()] == ' ' || str.size() == word.size()))
-				||
-				(pos && str[pos - 1] == ' ' &&
-					(
-						str[pos + word.size()] == ' ' ||
-						str[pos + word.size()] == '\0'
-					)
-				)
-		)
-			return (1);
-		
-		pos = str.find(word, pos + word.size());
-	}
-
-	return (0);
-}
-
- // process data (lines) stored in client buffer
+ // process data (i.e lines) stored in client buffer
 void	Server::procCmds(Client &client)
 {
 	string		line;
-	ICommand	*cmd = NULL;
 
-	client >> line; //getting line from client buffer
+	client >> line;
 
 	while (!line.empty())
 	{
+		ICommand	*cmd = NULL;
+
 		for (int i = 0; i < CMDS_N; i++)
 		{
-			if (foundWrd(line, cmdNames[i]))
+			if (foundWrd(line, cmdNames[i])) // command [name and factoryMethod] share same index
 			{
-				cmd = cmdFactory[i](split(line.c_str(), ' '));
+				cmd = cmdFactory[i](split(line.c_str(), ' ')); // cmdFactory[indexOfFactoryMethod](argsList)
+
 				cmd->parse();
 				cmd->execute();
 				cmd->resp();
 				break ;
 			}
-
 		}
+
 		client >> line;
 	}
 }

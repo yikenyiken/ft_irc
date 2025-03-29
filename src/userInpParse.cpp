@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+
 #define SUCCESS 0
 #define FAILURE 1
 
@@ -21,7 +22,7 @@ int isZeroSeq(char *str)
     return (1);
 }
 
-int portEval(char *port)
+int portParse(char *port)
 {
     int n = strtol(port, NULL, 10);
 
@@ -34,7 +35,7 @@ int portEval(char *port)
     return (SUCCESS);
 }
 
-int argNumEval(int ac)
+int argNumParse(int ac)
 {
     if (ac != 2)
     {
@@ -47,7 +48,7 @@ int argNumEval(int ac)
 
 void    usrInpParse(int ac, char **av)
 {
-    if (argNumEval(ac) || portEval(av[1]))
+    if (argNumParse(ac) || portParse(av[1]))
         exit(FAILURE);
 }
 

@@ -1,10 +1,11 @@
 #ifndef Server_HPP
 # define Server_HPP
-# define CMDS_N 1
-# include <vector>
 # include "Monitor.hpp"
 # include "ClientList.hpp"
 # include "commands/ICommand.hpp"
+# include <vector>
+
+# define CMDS_N 1
 
 class Server
 {

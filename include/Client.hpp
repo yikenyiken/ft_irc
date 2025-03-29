@@ -16,8 +16,8 @@ class Client
 		Client			&operator = (const Client &rhs);
 		int				getSockfd() const;
 		void			setSockfd(int fd);
-		std::ostream	&operator << (std::string s);
-		std::string		&operator >>(std::string &ostr);
+		std::string		&operator >> (std::string &line);
+		ssize_t			recvData();
 
 		friend std::ostream	&operator << (std::ostream &os, Client &client);
 };

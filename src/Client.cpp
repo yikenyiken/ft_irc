@@ -1,6 +1,11 @@
-#include "Client.hpp"
+#include "../include/Client.hpp"
+#include "../include/error.h"
 #include <iostream>
 #include <unistd.h>
+#include <netdb.h>
+
+#define BUFLEN 2
+#define RDLEN BUFLEN - 1
 
 Client::Client()
 {
@@ -42,17 +47,9 @@ void	Client::setSockfd(int fd)
 	sockfd = fd;
 }
 
-std::ostream	&Client::operator << (std::string s)
+//getting a line from the buffer
+std::string	&Client::operator >> (std::string &line)
 {
-	buf << s;
-
-	return (buf);
-}
-
-std::string	&Client::operator >> (std::string &ostr)
-{
-	std::string	line;
-
 	std::getline(buf, line);
 
 	if (buf.eof())
@@ -62,10 +59,29 @@ std::string	&Client::operator >> (std::string &ostr)
 		line = "";
 	}
 
-	ostr = line;
-
-	return (ostr);
+	return (line);
 }
+
+// reads from socket to buffer
+// returns 0 if connection closed ;otherwise non-zero is returned
+ssize_t	Client::recvData()
+{
+	char	data[BUFLEN];
+	ssize_t	bytes_read = recv(sockfd, data, RDLEN, 0);
+
+	while (bytes_read && bytes_read != -1) // read all available data into client buffer
+	{
+		data[bytes_read] = '\0';
+		buf << data;
+		bytes_read = recv(sockfd, data, RDLEN, 0);
+	}
+
+	if (bytes_read == (ssize_t)-1 && errno != EWOULDBLOCK)
+		rtimeThrow("recv");
+
+	return (bytes_read);
+}
+
 
 std::ostream	&operator << (std::ostream &os, Client &client)
 {

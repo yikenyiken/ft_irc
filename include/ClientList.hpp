@@ -1,7 +1,7 @@
 #ifndef ClientList_HPP
 # define ClientList_HPP
-# include <vector>
 # include "Client.hpp"
+# include <vector>
 
 class ClientList
 {

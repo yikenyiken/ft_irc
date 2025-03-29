@@ -1,12 +1,10 @@
-#define SUCCESS 0
-#define FAILURE 1
+#include "../include/Server.hpp"
+#include "../include/parse.h"
 #include <iostream>
 #include <string>
-#include "Server.hpp"
 
-using namespace std;
-
-void    usrInpParse(int ac, char **av);
+#define SUCCESS 0
+#define FAILURE 1
 
 int main(int argc, char **argv)
 {
@@ -18,9 +16,9 @@ int main(int argc, char **argv)
     {
         server.launch();
     }
-    catch (exception &e)
+    catch (std::exception &e)
     {
-        cerr << e.what() << endl;
+        std::cerr << e.what() << std::endl;
 
         return (FAILURE);
     }
