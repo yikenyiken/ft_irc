@@ -10,6 +10,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <netdb.h>
+#include <new>
 
 using namespace std;
 
@@ -24,14 +25,15 @@ Server::Server(const char *port)
 	std::cout << "Server's Parametrized Constructor called\n";
 
 	string	tmpCmdNames[CMDS_N] = {"PASS"}; // add command names here
-	
+
+	ACommand	*(*tmpCmdFactory[CMDS_N])(Server &server, Client &client, char **args)
+	= {Pass::create}; // add facatory methods here
+
 	for (int i = 0; i < CMDS_N; i++)
+	{
 		cmdNames[i] = tmpCmdNames[i];
-
-	ICommand	*(*tmpCmdFactory[CMDS_N])(char **args) = {Pass::create}; // add facatory methods here
-
-	for (int i = 0; i < CMDS_N; i++)
 		cmdFactory[i] = tmpCmdFactory[i];
+	}
 }
 
 Server::Server(const Server &other) 
@@ -118,23 +120,24 @@ void	Server::handleClientEvents(Client &client)
  // process data (i.e lines) stored in client buffer
 void	Server::procCmds(Client &client)
 {
+	ACommand	*cmd;
 	string		line;
 
 	client >> line;
 
 	while (!line.empty())
 	{
-		ICommand	*cmd = NULL;
-
 		for (int i = 0; i < CMDS_N; i++)
 		{
 			if (foundWrd(line, cmdNames[i])) // command [name and factoryMethod] share same index
 			{
-				cmd = cmdFactory[i](split(line.c_str(), ' ')); // cmdFactory[indexOfFactoryMethod](argsList)
+				cmd = cmdFactory[i](*this, client, split(line.c_str(), ' ')); // cmdFactory[indexOfFactoryMethod](argsList)
 
 				cmd->parse();
 				cmd->execute();
 				cmd->resp();
+
+				delete cmd;
 				break ;
 			}
 		}

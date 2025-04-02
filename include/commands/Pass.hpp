@@ -1,21 +1,18 @@
 #ifndef Pass_HPP
 # define Pass_HPP
-# include "ICommand.hpp"
+# include "ACommand.hpp"
 
-class Pass : public ICommand
+class Pass : public ACommand
 {
 	public:
-		Pass();
-		Pass(char **args);
-		Pass(const Pass &other);
+		Pass(Server &server, Client &client, char **args);
 		~Pass();
 
-		Pass			&operator = (const Pass &rhs);
 		void			parse();
 		void			execute();
 		void			resp();
 
-		static ICommand	*create(char **args);
+		static ACommand	*create(Server &server, Client &client, char **args);
 };
 
 #endif

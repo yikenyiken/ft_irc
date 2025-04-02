@@ -34,7 +34,6 @@ void	Monitor::add(int fd, short events)
 {
 	pollfd	pfd;
 
-	
 	pfd.fd = fd;
 	pfd.events = events;
 	

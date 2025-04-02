@@ -2,10 +2,12 @@
 # define Server_HPP
 # include "Monitor.hpp"
 # include "ClientList.hpp"
-# include "commands/ICommand.hpp"
+# include "commands/ACommand.hpp"
 # include <vector>
 
 # define CMDS_N 1
+
+class ACommand;
 
 class Server
 {
@@ -14,7 +16,7 @@ class Server
         Monitor     monitor;
         ClientList  clients;
         std::string	cmdNames[CMDS_N];
-        ICommand    *(*cmdFactory[CMDS_N])(char **args);
+        ACommand    *(*cmdFactory[CMDS_N])(Server &server, Client &client, char **args);
 
     public:
         Server();

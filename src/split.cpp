@@ -30,7 +30,7 @@ char	*getNextWord(const char *str, char sep)
 	while (str[i] == sep)
 		i++;
 
-	while (str[i + j] != sep)
+	while (str[i + j] != sep && str[i + j])
 		j++;
 	
 	word = (char *)malloc(j + 1);

@@ -1,8 +1,8 @@
 #include "../include/Client.hpp"
 #include "../include/error.h"
 #include <iostream>
-#include <unistd.h>
 #include <netdb.h>
+#include <errno.h>
 
 #define BUFLEN 2
 #define RDLEN BUFLEN - 1

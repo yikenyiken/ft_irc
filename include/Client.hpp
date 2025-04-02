@@ -1,6 +1,7 @@
 #ifndef Client_HPP
 # define Client_HPP
 # include <sstream>
+# include <unistd.h>
 
 class Client
 {
