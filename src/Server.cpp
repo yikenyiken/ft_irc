@@ -66,19 +66,25 @@ void    Server::launch()
 	while(true)
 	{
 		const vector<pollfd>	&lst = monitor.getList();
+		int						fdsHandled = 0;
 
 		monitor.listen();
 
-		int	fdsHandled = 0;
-
 		for (std::size_t i = 0; i < lst.size(); i++)
 		{
+			if (lst[i].revents & POLLOUT)
+			{
+				handleClientOutReady(clients.getClientByFd(lst[i].fd));
+
+				++fdsHandled;
+			}
+
 			if (lst[i].revents & POLLIN)
 			{
 				if (lst[i].fd == servSock)
-					acceptCnts();
+					acceptCnt();
 				else
-					handleClientEvents(clients.getClientByFd(lst[i].fd));
+					handleClientInReady(clients.getClientByFd(lst[i].fd));
 
 				++fdsHandled;
 			}
@@ -89,7 +95,7 @@ void    Server::launch()
 	}
 }
 
-void    Server::acceptCnts()
+void    Server::acceptCnt()
 {
 	int fd;
 
@@ -99,13 +105,13 @@ void    Server::acceptCnts()
 	if (fcntl(fd, F_SETFL, O_NONBLOCK) == -1)
 		rtimeThrow("fcntl");
 
-	monitor.add(fd, POLLIN);
+	monitor.add(fd, POLLIN | POLLOUT);
 	clients.add(fd);
 }
 
-void	Server::handleClientEvents(Client &client)
+void	Server::handleClientInReady(Client &client)
 {
-	int closed = !client.recvData();
+	int closed = !(client.recvData());
 
 	if (closed) // connection closed
 	{
@@ -117,13 +123,20 @@ void	Server::handleClientEvents(Client &client)
 	procCmds(client);
 }
 
- // process data (i.e lines) stored in client buffer
+void	Server::handleClientOutReady(Client &client)
+{
+	// check if buffer not empty to call sendData
+	if (client.readyToSend())
+		client.sendData();
+}
+
+// process data (i.e lines) stored in client buffer
 void	Server::procCmds(Client &client)
 {
 	ACommand	*cmd;
 	string		line;
 
-	client >> line;
+	cerr << (client >> line) << endl;
 
 	while (!line.empty())
 	{

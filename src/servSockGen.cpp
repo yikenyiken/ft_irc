@@ -1,5 +1,6 @@
 #include <iostream>
 #include <netdb.h>
+#include <sys/socket.h>
 #include <cstring>
 #include <fcntl.h>
 #include <unistd.h>
@@ -38,7 +39,7 @@ int	getBoundSock(addrinfo *res)
 			continue ;
 		}	
 
-		if (fcntl(fd, F_SETFL, SOCK_NONBLOCK) == -1 ||
+		if (fcntl(fd, F_SETFL, O_NONBLOCK) == -1 ||
 			bind(fd, p->ai_addr, p->ai_addrlen) == -1)
 		{
 			close(fd);

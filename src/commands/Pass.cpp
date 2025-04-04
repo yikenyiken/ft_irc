@@ -36,7 +36,7 @@ void	Pass::execute()
 
 	if (respVal != NORESP)
 		return ;
-
+	
 	
 }
 
@@ -46,7 +46,7 @@ void	Pass::resp()
 
 	// for example only one to be handled in Pass case
 
-	
+	client << respVal;
 }
 
 

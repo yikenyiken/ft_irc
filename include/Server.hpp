@@ -26,8 +26,9 @@ class Server
 
         Server	&operator = (const Server &rhs);
         void    launch();
-        void    acceptCnts();
-        void    handleClientEvents(Client &client);
+        void    acceptCnt();
+		void	handleClientInReady(Client &client);
+		void	handleClientOutReady(Client &client);
         void    procCmds(Client &client);
 };
 
