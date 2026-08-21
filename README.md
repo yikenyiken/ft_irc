@@ -10,7 +10,7 @@ A non-blocking IRC server developed in C++ as a team project, focused on network
 Clone the original project:
 
 ```bash
-git clone <original-repository-url>
+git clone https://github.com/messkely/ft_irc.git
 cd ft_irc
 ```
 
