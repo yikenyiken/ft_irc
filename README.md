@@ -25,7 +25,7 @@ make
 
 The demo shows the server running with clients connected through **HexChat** and **netcat (`nc`)**.
 
-[▶️ Watch the demo](./assets/demo.mp4)
+<video src="https://github.com/user-attachments/assets/826bbdad-74b7-45ef-9fb6-d2506be9bb40" controls></video>
 
 ## Features
 
