@@ -25,7 +25,7 @@ make
 
 The demo shows the server running with clients connected through **HexChat** and **netcat (`nc`)**.
 
-[▶️ Watch the demo](./assets/demo.webm)
+[▶️ Watch the demo](./assets/demo.mp4)
 
 ## Features
 
